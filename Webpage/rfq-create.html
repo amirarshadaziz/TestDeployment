@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SAP – Create Request for Quotation</title>
+  <style>
+    /* ── SAP Design Tokens ─────────────────────────────── */
+    :root {
+      --sap-blue:           #0064d9;
+      --sap-blue-hover:     #0057b8;
+      --sap-shell-bg:       #354a5e;
+      --sap-shell-text:     #ffffff;
+      --sap-page-bg:        #f5f6f7;
+      --sap-card-bg:        #ffffff;
+      --sap-border:         #d9d9d9;
+      --sap-border-light:   #eeeeee;
+      --sap-text-primary:   #32363a;
+      --sap-text-secondary: #6a6d70;
+      --sap-text-label:     #8c8c8c;
+      --sap-success:        #188918;
+      --sap-success-bg:     #f1fdf1;
+      --sap-warning:        #df6e0c;
+      --sap-warning-bg:     #fef7f1;
+      --sap-error:          #bb0000;
+      --sap-error-bg:       #fff1f1;
+      --sap-error-border:   #f5b3b3;
+      --sap-info:           #0070f2;
+      --sap-info-bg:        #e8f3ff;
+      --sap-neutral-bg:     #f5f6f7;
+      --sap-row-hover:      #eaf2ff;
+      --sap-required:       #bb0000;
+      --font-family:        'Segoe UI', '72', Arial, sans-serif;
+      --radius-sm:          4px;
+      --radius-md:          8px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-family);
+      font-size: 14px;
+      color: var(--sap-text-primary);
+      background: var(--sap-page-bg);
+      min-height: 100vh;
+    }
+
+    /* ── Shell Bar ─────────────────────────────────────── */
+    .shell-bar {
+      background: var(--sap-shell-bg);
+      height: 44px;
+      display: flex; align-items: center;
+      padding: 0 16px; gap: 12px;
+      position: sticky; top: 0; z-index: 100;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+    .shell-bar__logo-mark {
+      background: #fff; color: var(--sap-shell-bg);
+      font-weight: 700; font-size: 11px;
+      padding: 2px 5px; border-radius: 2px; letter-spacing: 0.5px;
+    }
+    .shell-bar__product { color: var(--sap-shell-text); font-size: 15px; font-weight: 600; }
+    .shell-bar__divider { width: 1px; height: 20px; background: rgba(255,255,255,0.3); }
+    .shell-bar__app-title { color: rgba(255,255,255,0.9); font-size: 14px; }
+    .shell-bar__spacer { flex: 1; }
+    .shell-bar__actions { display: flex; align-items: center; gap: 4px; }
+    .shell-icon-btn {
+      background: none; border: none; color: var(--sap-shell-text);
+      width: 36px; height: 36px;
+      display: flex; align-items: center; justify-content: center;
+      border-radius: var(--radius-sm); cursor: pointer; font-size: 16px;
+      transition: background 0.15s;
+    }
+    .shell-icon-btn:hover { background: rgba(255,255,255,0.15); }
+    .shell-bar__avatar {
+      width: 30px; height: 30px; border-radius: 50%;
+      background: #5ba4cf; color: #fff;
+      font-size: 12px; font-weight: 600;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; margin-left: 4px;
+    }
+
+    /* ── Page Layout ───────────────────────────────────── */
+    .page-wrapper { max-width: 1100px; margin: 0 auto; padding: 0 24px 48px; }
+
+    /* ── Breadcrumb ────────────────────────────────────── */
+    .breadcrumb {
+      display: flex; align-items: center; gap: 6px;
+      padding: 10px 0 6px; font-size: 12px; color: var(--sap-text-label);
+    }
+    .breadcrumb a { color: var(--sap-blue); text-decoration: none; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb__sep { color: var(--sap-border); }
+
+    /* ── Page Header ───────────────────────────────────── */
+    .page-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 0 16px;
+    }
+    .page-header__title { font-size: 22px; font-weight: 300; }
+    .page-header__subtitle { font-size: 13px; color: var(--sap-text-secondary); margin-top: 2px; }
+    .page-header__actions { display: flex; gap: 8px; }
+
+    /* ── Progress Steps ────────────────────────────────── */
+    .progress-bar {
+      display: flex; align-items: center;
+      background: var(--sap-card-bg);
+      border: 1px solid var(--sap-border);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+    .progress-step {
+      flex: 1; display: flex; align-items: center; gap: 10px;
+      padding: 12px 16px;
+      border-right: 1px solid var(--sap-border);
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .progress-step:last-child { border-right: none; }
+    .progress-step:hover { background: var(--sap-row-hover); }
+    .progress-step.active { background: var(--sap-info-bg); }
+    .progress-step.done { background: var(--sap-success-bg); }
+    .progress-step__num {
+      width: 26px; height: 26px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 700;
+      border: 2px solid var(--sap-border);
+      color: var(--sap-text-secondary);
+      flex-shrink: 0;
+    }
+    .progress-step.active .progress-step__num { border-color: var(--sap-blue); background: var(--sap-blue); color: #fff; }
+    .progress-step.done .progress-step__num { border-color: var(--sap-success); background: var(--sap-success); color: #fff; font-size: 14px; }
+    .progress-step__label { font-size: 13px; color: var(--sap-text-secondary); line-height: 1.2; }
+    .progress-step.active .progress-step__label { color: var(--sap-blue); font-weight: 600; }
+    .progress-step.done .progress-step__label { color: var(--sap-success); }
+    .progress-step__sub { font-size: 11px; color: var(--sap-text-label); margin-top: 1px; }
+
+    /* ── Form Card ─────────────────────────────────────── */
+    .form-card {
+      background: var(--sap-card-bg);
+      border: 1px solid var(--sap-border);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+    .form-card__header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 13px 20px;
+      background: var(--sap-neutral-bg);
+      border-bottom: 1px solid var(--sap-border);
+    }
+    .form-card__title { font-size: 14px; font-weight: 600; color: var(--sap-text-primary); }
+    .form-card__body { padding: 4px 0; }
+
+    /* ── Form Row / Field ──────────────────────────────── */
+    .form-row {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0;
+    }
+    .form-row--3 { grid-template-columns: repeat(3, 1fr); }
+    .form-row--4 { grid-template-columns: repeat(4, 1fr); }
+
+    .field {
+      padding: 12px 20px;
+      border-bottom: 1px solid var(--sap-border-light);
+      border-right: 1px solid var(--sap-border-light);
+    }
+    .field:last-child, .field:nth-child(2n):not(.field--span2) { border-right: none; }
+    .form-row--3 .field:nth-child(3n) { border-right: none; }
+    .form-row--3 .field:nth-child(2n):not(.field--span2) { border-right: 1px solid var(--sap-border-light); }
+    .form-row--4 .field:nth-child(4n) { border-right: none; }
+    .form-row--4 .field:nth-child(2n):not(.field--span2) { border-right: 1px solid var(--sap-border-light); }
+    .field--span2 { grid-column: span 2; }
+    .field--span3 { grid-column: span 3; }
+    .field--full  { grid-column: 1 / -1; border-right: none; }
+
+    .field__label {
+      font-size: 12px; color: var(--sap-text-label);
+      margin-bottom: 5px; display: flex; align-items: center; gap: 3px;
+    }
+    .field__required { color: var(--sap-required); font-size: 13px; line-height: 1; }
+    .field__hint { font-size: 11px; color: var(--sap-text-label); margin-top: 3px; }
+    .field__error { font-size: 11px; color: var(--sap-error); margin-top: 3px; display: none; }
+    .field.has-error .field__error { display: block; }
+    .field.has-error input, .field.has-error select, .field.has-error textarea {
+      border-color: var(--sap-error) !important;
+    }
+
+    /* ── Inputs ────────────────────────────────────────── */
+    input[type="text"],
+    input[type="number"],
+    input[type="date"],
+    input[type="email"],
+    input[type="tel"],
+    select,
+    textarea {
+      width: 100%;
+      height: 32px;
+      padding: 0 10px;
+      border: 1px solid var(--sap-border);
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      font-family: var(--font-family);
+      color: var(--sap-text-primary);
+      background: #fff;
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+      appearance: none;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--sap-blue);
+      box-shadow: 0 0 0 2px rgba(0,100,217,0.12);
+    }
+    input:disabled, select:disabled, textarea:disabled {
+      background: var(--sap-neutral-bg);
+      color: var(--sap-text-secondary);
+      cursor: not-allowed;
+    }
+    textarea {
+      height: auto;
+      padding: 8px 10px;
+      resize: vertical;
+      line-height: 1.5;
+    }
+    select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%236a6d70' d='M6 8L0 0h12z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+      padding-right: 28px;
+    }
+
+    /* Value help button (F4-style) */
+    .input-group {
+      display: flex; gap: 4px;
+    }
+    .input-group input { flex: 1; }
+    .vh-btn {
+      width: 32px; height: 32px; flex-shrink: 0;
+      background: var(--sap-neutral-bg);
+      border: 1px solid var(--sap-border);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; color: var(--sap-text-secondary);
+      transition: background 0.15s;
+    }
+    .vh-btn:hover { background: var(--sap-row-hover); color: var(--sap-blue); border-color: var(--sap-blue); }
+
+    /* Display field (read-only with a value) */
+    .display-field {
+      height: 32px;
+      display: flex; align-items: center;
+      font-size: 13px;
+      color: var(--sap-text-secondary);
+      font-style: italic;
+    }
+    .display-field--value { color: var(--sap-text-primary); font-style: normal; font-weight: 500; }
+
+    /* ── Line Items Builder ─────────────────────────────── */
+    .items-toolbar {
+      display: flex; align-items: center; gap: 8px;
+      padding: 10px 20px;
+      border-bottom: 1px solid var(--sap-border-light);
+      background: var(--sap-neutral-bg);
+    }
+    .items-table-wrap { overflow-x: auto; }
+    .items-table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 900px;
+    }
+    .items-table th {
+      padding: 9px 10px;
+      text-align: left;
+      font-size: 11px; font-weight: 600;
+      color: var(--sap-text-secondary);
+      text-transform: uppercase; letter-spacing: 0.4px;
+      background: var(--sap-neutral-bg);
+      border-bottom: 2px solid var(--sap-border);
+      white-space: nowrap;
+    }
+    .items-table th.right, .items-table td.right { text-align: right; }
+    .items-table td {
+      padding: 7px 10px;
+      border-bottom: 1px solid var(--sap-border-light);
+      vertical-align: middle;
+    }
+    .items-table tbody tr:hover { background: var(--sap-row-hover); }
+    .items-table tbody tr:last-child td { border-bottom: none; }
+
+    .item-num { font-size: 12px; color: var(--sap-text-secondary); font-weight: 600; white-space: nowrap; }
+    .items-table input[type="text"],
+    .items-table input[type="number"],
+    .items-table select {
+      height: 28px;
+      font-size: 12px;
+      padding: 0 8px;
+    }
+    .items-table .input-group { gap: 3px; }
+    .items-table .vh-btn { width: 28px; height: 28px; font-size: 12px; }
+    .del-row-btn {
+      background: none; border: none;
+      color: var(--sap-text-label);
+      width: 26px; height: 26px;
+      border-radius: var(--radius-sm);
+      cursor: pointer; font-size: 16px;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.15s, color 0.15s;
+    }
+    .del-row-btn:hover { background: var(--sap-error-bg); color: var(--sap-error); }
+
+    /* ── Vendor Multi-select ───────────────────────────── */
+    .vendor-list {
+      padding: 12px 20px 4px;
+    }
+    .vendor-tag-row {
+      display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px;
+    }
+    .vendor-tag {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--sap-info-bg);
+      border: 1px solid #b3d4f5;
+      border-radius: var(--radius-sm);
+      padding: 5px 12px;
+      font-size: 13px;
+      color: var(--sap-blue);
+    }
+    .vendor-tag__name { font-weight: 500; }
+    .vendor-tag__id { font-size: 11px; color: var(--sap-text-secondary); }
+    .vendor-tag__remove {
+      background: none; border: none;
+      color: var(--sap-blue); opacity: 0.6;
+      cursor: pointer; font-size: 14px; line-height: 1;
+      padding: 0; display: flex; align-items: center;
+    }
+    .vendor-tag__remove:hover { opacity: 1; }
+    .add-vendor-row { display: flex; gap: 8px; align-items: center; padding-bottom: 12px; }
+    .add-vendor-row input { max-width: 280px; }
+
+    /* ── Inline Message ────────────────────────────────── */
+    .message-strip {
+      display: flex; align-items: flex-start; gap: 10px;
+      padding: 10px 16px; border-radius: var(--radius-sm);
+      font-size: 13px; margin-bottom: 16px;
+    }
+    .message-strip--info { background: var(--sap-info-bg); border: 1px solid #b3d4f5; color: #0057b8; }
+
+    /* ── Buttons ───────────────────────────────────────── */
+    .btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 0 16px; height: 36px;
+      border-radius: var(--radius-sm);
+      font-size: 14px; font-family: var(--font-family);
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s;
+      white-space: nowrap; text-decoration: none;
+    }
+    .btn--sm { height: 28px; padding: 0 10px; font-size: 12px; }
+    .btn--primary { background: var(--sap-blue); color: #fff; border: 1px solid var(--sap-blue); font-weight: 600; }
+    .btn--primary:hover { background: var(--sap-blue-hover); border-color: var(--sap-blue-hover); }
+    .btn--ghost { background: transparent; color: var(--sap-text-primary); border: 1px solid var(--sap-border); }
+    .btn--ghost:hover { background: var(--sap-neutral-bg); }
+    .btn--danger { background: transparent; color: var(--sap-error); border: 1px solid var(--sap-error-border); }
+    .btn--danger:hover { background: var(--sap-error-bg); }
+
+    /* ── Footer Action Bar ─────────────────────────────── */
+    .action-footer {
+      position: sticky; bottom: 0; z-index: 50;
+      background: var(--sap-card-bg);
+      border-top: 1px solid var(--sap-border);
+      padding: 12px 24px;
+      display: flex; align-items: center; gap: 10px;
+      box-shadow: 0 -2px 8px rgba(0,0,0,0.08);
+      margin: 0 -24px;
+    }
+    .action-footer__spacer { flex: 1; }
+  </style>
+</head>
+<body>
+
+  <!-- ═══════════════ SHELL BAR ═══════════════ -->
+  <header class="shell-bar">
+    <span class="shell-bar__logo-mark">SAP</span>
+    <span class="shell-bar__product">S/4HANA</span>
+    <span class="shell-bar__divider"></span>
+    <span class="shell-bar__app-title">Manage Request for Quotations</span>
+    <span class="shell-bar__spacer"></span>
+    <div class="shell-bar__actions">
+      <button class="shell-icon-btn">&#128269;</button>
+      <button class="shell-icon-btn">&#128276;</button>
+      <button class="shell-icon-btn">&#63;</button>
+      <button class="shell-icon-btn">&#9881;</button>
+      <div class="shell-bar__avatar">JM</div>
+    </div>
+  </header>
+
+  <div class="page-wrapper">
+
+    <!-- ═══════════════ BREADCRUMB ═══════════════ -->
+    <nav class="breadcrumb">
+      <a href="#">Home</a>
+      <span class="breadcrumb__sep">&#8250;</span>
+      <a href="#">Purchasing</a>
+      <span class="breadcrumb__sep">&#8250;</span>
+      <a href="rfq-overview.html">Request for Quotation</a>
+      <span class="breadcrumb__sep">&#8250;</span>
+      <span>Create RFQ</span>
+    </nav>
+
+    <!-- ═══════════════ PAGE HEADER ═══════════════ -->
+    <div class="page-header">
+      <div>
+        <h1 class="page-header__title">Create Request for Quotation</h1>
+        <p class="page-header__subtitle">New document — not yet saved</p>
+      </div>
+      <div class="page-header__actions">
+        <button class="btn btn--ghost" onclick="window.location='rfq-overview.html'">&#10005; Cancel</button>
+        <button class="btn btn--ghost">&#128190; Save as Draft</button>
+      </div>
+    </div>
+
+    <!-- ═══════════════ PROGRESS STEPS ═══════════════ -->
+    <div class="progress-bar">
+      <div class="progress-step done">
+        <div class="progress-step__num">&#10003;</div>
+        <div>
+          <div class="progress-step__label">RFQ Type</div>
+          <div class="progress-step__sub">AN – Standard RFQ</div>
+        </div>
+      </div>
+      <div class="progress-step active">
+        <div class="progress-step__num">2</div>
+        <div>
+          <div class="progress-step__label">Header &amp; Dates</div>
+          <div class="progress-step__sub">General information</div>
+        </div>
+      </div>
+      <div class="progress-step">
+        <div class="progress-step__num">3</div>
+        <div>
+          <div class="progress-step__label">Line Items</div>
+          <div class="progress-step__sub">Materials &amp; quantities</div>
+        </div>
+      </div>
+      <div class="progress-step">
+        <div class="progress-step__num">4</div>
+        <div>
+          <div class="progress-step__label">Vendors</div>
+          <div class="progress-step__sub">Select recipients</div>
+        </div>
+      </div>
+      <div class="progress-step">
+        <div class="progress-step__num">5</div>
+        <div>
+          <div class="progress-step__label">Review &amp; Submit</div>
+          <div class="progress-step__sub">Confirm &amp; send</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════ SECTION 1: GENERAL INFO ═══════════════ -->
+    <div class="form-card">
+      <div class="form-card__header">
+        <span class="form-card__title">General Information</span>
+      </div>
+      <div class="form-card__body">
+        <div class="form-row">
+          <!-- EXAMPLE: RFQ type field (pre-filled from step 1) -->
+          <div class="field">
+            <div class="field__label">RFQ Type <span class="field__required">*</span></div>
+            <select>
+              <option selected>AN – Standard RFQ</option>
+              <option>AB – Bid Invitation</option>
+              <option>LPA – Scheduling Agreement RFQ</option>
+            </select>
+          </div>
+          <!-- EXAMPLE: description field -->
+          <div class="field">
+            <div class="field__label">Short Description <span class="field__required">*</span></div>
+            <input type="text" placeholder="e.g. Industrial Pump Components – Q2 Supply" value="Industrial Pump Components – Q2 Supply" />
+          </div>
+        </div>
+        <div class="form-row form-row--3">
+          <div class="field">
+            <div class="field__label">Purchasing Organization <span class="field__required">*</span></div>
+            <div class="input-group">
+              <select>
+                <option selected>1000 – Germany</option>
+                <option>2000 – US</option>
+                <option>3000 – UK</option>
+              </select>
+            </div>
+          </div>
+          <div class="field">
+            <div class="field__label">Purchasing Group <span class="field__required">*</span></div>
+            <div class="input-group">
+              <input type="text" value="010" />
+              <button class="vh-btn" title="Value Help">&#9660;</button>
+            </div>
+            <div class="field__hint">010 – Mechanical</div>
+          </div>
+          <div class="field">
+            <div class="field__label">Company Code</div>
+            <div class="input-group">
+              <input type="text" value="1000" />
+              <button class="vh-btn" title="Value Help">&#9660;</button>
+            </div>
+            <div class="field__hint">1000 – SAP AG</div>
+          </div>
+        </div>
+        <div class="form-row form-row--4">
+          <!-- EXAMPLE: date fields -->
+          <div class="field">
+            <div class="field__label">Document Date <span class="field__required">*</span></div>
+            <input type="date" value="2026-03-24" />
+          </div>
+          <div class="field">
+            <div class="field__label">Quotation Deadline <span class="field__required">*</span></div>
+            <input type="date" value="2026-04-14" />
+            <div class="field__hint">Deadline for vendor submissions</div>
+          </div>
+          <div class="field">
+            <div class="field__label">Binding Period (days)</div>
+            <input type="number" value="30" min="1" />
+            <div class="field__hint">Days quote remains valid after deadline</div>
+          </div>
+          <div class="field">
+            <div class="field__label">Expected Delivery Date</div>
+            <input type="date" value="2026-05-15" />
+          </div>
+          <!-- END EXAMPLE -->
+        </div>
+        <div class="form-row form-row--3">
+          <div class="field">
+            <div class="field__label">Currency <span class="field__required">*</span></div>
+            <select>
+              <option selected>EUR – Euro</option>
+              <option>USD – US Dollar</option>
+              <option>GBP – British Pound</option>
+              <option>CHF – Swiss Franc</option>
+            </select>
+          </div>
+          <div class="field">
+            <div class="field__label">Incoterms</div>
+            <select>
+              <option>—</option>
+              <option selected>DDP – Delivered Duty Paid</option>
+              <option>EXW – Ex Works</option>
+              <option>FCA – Free Carrier</option>
+              <option>CIF – Cost Insurance Freight</option>
+            </select>
+          </div>
+          <div class="field">
+            <div class="field__label">Incoterms Location</div>
+            <input type="text" value="Hamburg Plant (1010)" />
+          </div>
+        </div>
+        <div class="form-row form-row--3">
+          <div class="field">
+            <div class="field__label">Payment Terms</div>
+            <div class="input-group">
+              <input type="text" value="ZB01" />
+              <button class="vh-btn" title="Value Help">&#9660;</button>
+            </div>
+            <div class="field__hint">ZB01 – 14 days 2%, 30 days net</div>
+          </div>
+          <div class="field">
+            <div class="field__label">Priority</div>
+            <select>
+              <option>Low</option>
+              <option selected>Medium</option>
+              <option>High</option>
+              <option>Urgent</option>
+            </select>
+          </div>
+          <div class="field">
+            <div class="field__label">Collective RFQ No.</div>
+            <input type="text" placeholder="Optional — group related RFQs" />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="field field--full">
+            <div class="field__label">Header Notes</div>
+            <textarea rows="3" placeholder="Enter any special instructions, terms, or notes visible to vendors…">Vendor confirmed telephone availability for technical queries. All items must comply with EN ISO 9001:2015. Certificates of conformity required on delivery.</textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════ SECTION 2: LINE ITEMS ═══════════════ -->
+    <div class="form-card">
+      <div class="form-card__header">
+        <span class="form-card__title">Line Items</span>
+        <span style="font-size:12px;color:var(--sap-text-secondary);">4 items</span>
+      </div>
+      <div class="form-card__body">
+        <div class="items-toolbar">
+          <button class="btn btn--ghost btn--sm">&#43; Add Item</button>
+          <button class="btn btn--ghost btn--sm">&#128196; Import from PR</button>
+          <button class="btn btn--ghost btn--sm">&#128196; Copy from PO</button>
+        </div>
+        <div class="items-table-wrap">
+          <table class="items-table">
+            <thead>
+              <tr>
+                <th style="width:50px;">Item</th>
+                <th style="width:150px;">Material No. <span style="color:var(--sap-required);">*</span></th>
+                <th>Short Text <span style="color:var(--sap-required);">*</span></th>
+                <th style="width:80px;" class="right">Quantity <span style="color:var(--sap-required);">*</span></th>
+                <th style="width:65px;">UoM <span style="color:var(--sap-required);">*</span></th>
+                <th style="width:120px;" class="right">Target Price</th>
+                <th style="width:90px;">Plant</th>
+                <th style="width:110px;">Del. Date</th>
+                <th style="width:36px;"></th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- EXAMPLE: line item input rows -->
+              <tr>
+                <td><span class="item-num">00010</span></td>
+                <td>
+                  <div class="input-group">
+                    <input type="text" value="MAT-PMP-0041" />
+                    <button class="vh-btn" title="Search material">&#9660;</button>
+                  </div>
+                </td>
+                <td><input type="text" value="Centrifugal Pump Casing – 316 SS, DN100" /></td>
+                <td class="right"><input type="number" value="5" min="0" style="text-align:right;" /></td>
+                <td>
+                  <select>
+                    <option selected>EA</option>
+                    <option>KG</option>
+                    <option>L</option>
+                    <option>SET</option>
+                    <option>M</option>
+                  </select>
+                </td>
+                <td class="right"><input type="number" placeholder="0.00" style="text-align:right;" /></td>
+                <td>
+                  <div class="input-group">
+                    <input type="text" value="1010" style="width:60px;" />
+                    <button class="vh-btn" title="Value Help">&#9660;</button>
+                  </div>
+                </td>
+                <td><input type="date" value="2026-05-15" /></td>
+                <td><button class="del-row-btn" title="Remove item">&#10005;</button></td>
+              </tr>
+              <tr>
+                <td><span class="item-num">00020</span></td>
+                <td>
+                  <div class="input-group">
+                    <input type="text" value="MAT-PMP-0088" />
+                    <button class="vh-btn" title="Search material">&#9660;</button>
+                  </div>
+                </td>
+                <td><input type="text" value="Impeller Assembly – Bronze, 250mm dia." /></td>
+                <td class="right"><input type="number" value="5" min="0" style="text-align:right;" /></td>
+                <td>
+                  <select>
+                    <option selected>EA</option><option>KG</option><option>SET</option>
+                  </select>
+                </td>
+                <td class="right"><input type="number" placeholder="0.00" style="text-align:right;" /></td>
+                <td>
+                  <div class="input-group">
+                    <input type="text" value="1010" style="width:60px;" />
+                    <button class="vh-btn">&#9660;</button>
+                  </div>
+                </td>
+                <td><input type="date" value="2026-05-15" /></td>
+                <td><button class="del-row-btn" title="Remove item">&#10005;</button></td>
+              </tr>
+              <tr>
+                <td><span class="item-num">00030</span></td>
+                <td>
+                  <div class="input-group">
+                    <input type="text" value="MAT-SL-0023" />
+                    <button class="vh-btn">&#9660;</button>
+                  </div>
+                </td>
+                <td><input type="text" value="Mechanical Seal Kit – PTFE, 40mm shaft" /></td>
+                <td class="right"><input type="number" value="20" min="0" style="text-align:right;" /></td>
+                <td>
+                  <select>
+                    <option>EA</option><option selected>SET</option><option>KG</option>
+                  </select>
+                </td>
+                <td class="right"><input type="number" placeholder="0.00" style="text-align:right;" /></td>
+                <td>
+                  <div class="input-group">
+                    <input type="text" value="1010" style="width:60px;" />
+                    <button class="vh-btn">&#9660;</button>
+                  </div>
+                </td>
+                <td><input type="date" value="2026-05-01" /></td>
+                <td><button class="del-row-btn">&#10005;</button></td>
+              </tr>
+              <tr>
+                <td><span class="item-num">00040</span></td>
+                <td>
+                  <div class="input-group">
+                    <input type="text" value="MAT-BRG-0111" />
+                    <button class="vh-btn">&#9660;</button>
+                  </div>
+                </td>
+                <td><input type="text" value="Bearing Housing – Cast Iron, flanged" /></td>
+                <td class="right"><input type="number" value="10" min="0" style="text-align:right;" /></td>
+                <td>
+                  <select>
+                    <option selected>EA</option><option>KG</option><option>SET</option>
+                  </select>
+                </td>
+                <td class="right"><input type="number" placeholder="0.00" style="text-align:right;" /></td>
+                <td>
+                  <div class="input-group">
+                    <input type="text" value="1010" style="width:60px;" />
+                    <button class="vh-btn">&#9660;</button>
+                  </div>
+                </td>
+                <td><input type="date" value="2026-05-20" /></td>
+                <td><button class="del-row-btn">&#10005;</button></td>
+              </tr>
+              <!-- END EXAMPLE -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════ SECTION 3: VENDOR SELECTION ═══════════════ -->
+    <div class="form-card">
+      <div class="form-card__header">
+        <span class="form-card__title">Vendor Selection</span>
+        <span style="font-size:12px;color:var(--sap-text-secondary);">3 vendors selected</span>
+      </div>
+      <div class="form-card__body">
+        <div class="vendor-list">
+          <!-- EXAMPLE: selected vendor tags -->
+          <div class="vendor-tag-row">
+            <div class="vendor-tag">
+              <div>
+                <div class="vendor-tag__name">Acme Industrial Supply Co.</div>
+                <div class="vendor-tag__id">100042 &nbsp;·&nbsp; Hamburg, DE</div>
+              </div>
+              <button class="vendor-tag__remove" title="Remove vendor">&#10005;</button>
+            </div>
+            <div class="vendor-tag">
+              <div>
+                <div class="vendor-tag__name">Meier Pumpentechnik GmbH</div>
+                <div class="vendor-tag__id">100078 &nbsp;·&nbsp; Munich, DE</div>
+              </div>
+              <button class="vendor-tag__remove" title="Remove vendor">&#10005;</button>
+            </div>
+            <div class="vendor-tag">
+              <div>
+                <div class="vendor-tag__name">GlobalParts AG</div>
+                <div class="vendor-tag__id">100129 &nbsp;·&nbsp; Zurich, CH</div>
+              </div>
+              <button class="vendor-tag__remove" title="Remove vendor">&#10005;</button>
+            </div>
+          </div>
+          <!-- END EXAMPLE -->
+          <div class="add-vendor-row">
+            <div class="input-group">
+              <input type="text" placeholder="Vendor number or name…" style="max-width:280px;" />
+              <button class="vh-btn" title="Search vendors">&#9660;</button>
+            </div>
+            <button class="btn btn--ghost btn--sm">&#43; Add Vendor</button>
+            <button class="btn btn--ghost btn--sm">&#128196; From Info Record</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════ SECTION 4: ATTACHMENTS ═══════════════ -->
+    <div class="form-card">
+      <div class="form-card__header">
+        <span class="form-card__title">Attachments &amp; Documents</span>
+      </div>
+      <div class="form-card__body">
+        <div style="padding: 16px 20px;">
+          <!-- EXAMPLE: attachment entries -->
+          <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px;">
+            <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;border:1px solid var(--sap-border);border-radius:var(--radius-sm);background:var(--sap-neutral-bg);">
+              <span style="font-size:20px;">&#128196;</span>
+              <div style="flex:1;">
+                <div style="font-size:13px;font-weight:500;">Technical_Spec_PumpComponents_v2.pdf</div>
+                <div style="font-size:11px;color:var(--sap-text-label);">PDF &nbsp;·&nbsp; 842 KB &nbsp;·&nbsp; Uploaded 14.03.2026</div>
+              </div>
+              <button class="btn btn--ghost btn--sm">&#128065; View</button>
+              <button class="del-row-btn" title="Remove">&#10005;</button>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;border:1px solid var(--sap-border);border-radius:var(--radius-sm);background:var(--sap-neutral-bg);">
+              <span style="font-size:20px;">&#128196;</span>
+              <div style="flex:1;">
+                <div style="font-size:13px;font-weight:500;">RFQ_Terms_and_Conditions_2026.docx</div>
+                <div style="font-size:11px;color:var(--sap-text-label);">DOCX &nbsp;·&nbsp; 128 KB &nbsp;·&nbsp; Uploaded 14.03.2026</div>
+              </div>
+              <button class="btn btn--ghost btn--sm">&#128065; View</button>
+              <button class="del-row-btn" title="Remove">&#10005;</button>
+            </div>
+          </div>
+          <!-- END EXAMPLE -->
+          <div style="border:2px dashed var(--sap-border);border-radius:var(--radius-md);padding:24px;text-align:center;color:var(--sap-text-secondary);">
+            <div style="font-size:28px;margin-bottom:8px;">&#128193;</div>
+            <div style="font-size:13px;margin-bottom:10px;">Drag and drop files here, or</div>
+            <button class="btn btn--ghost">&#43; Browse Files</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════ STICKY FOOTER ═══════════════ -->
+    <div class="action-footer">
+      <button class="btn btn--danger" onclick="window.location='rfq-overview.html'">&#10005; Discard</button>
+      <div class="action-footer__spacer"></div>
+      <button class="btn btn--ghost">&#8592; Previous</button>
+      <button class="btn btn--ghost">&#128190; Save as Draft</button>
+      <button class="btn btn--primary">Send RFQ to Vendors &#8250;</button>
+    </div>
+
+  </div><!-- /page-wrapper -->
+
+</body>
+</html>
