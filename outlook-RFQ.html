@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Outlook – Sent Items</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: #f3f2f1; display: flex; flex-direction: column; height: 100vh; overflow: hidden; font-size: 14px; color: #242424; }
+
+  /* ── Top bar ── */
+  .topbar {
+    display: flex; align-items: center; gap: 0;
+    background: #0f6cbd; height: 48px; padding: 0 12px;
+    flex-shrink: 0;
+  }
+  .topbar-logo { display: flex; align-items: center; gap: 8px; color: #fff; font-size: 16px; font-weight: 600; padding-right: 16px; }
+  .topbar-logo svg { width: 20px; height: 20px; fill: #fff; }
+  .topbar-search {
+    flex: 1; max-width: 600px; background: rgba(255,255,255,0.2);
+    border: 1px solid rgba(255,255,255,0.3); border-radius: 4px;
+    display: flex; align-items: center; padding: 0 10px; gap: 6px; height: 32px;
+    color: #fff;
+  }
+  .topbar-search input {
+    background: transparent; border: none; outline: none; color: #fff;
+    font-size: 13px; width: 100%;
+  }
+  .topbar-search input::placeholder { color: rgba(255,255,255,0.75); }
+  .topbar-right { margin-left: auto; display: flex; align-items: center; gap: 12px; }
+  .avatar {
+    width: 32px; height: 32px; border-radius: 50%; background: #c3e7ff;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 600; font-size: 13px; color: #0f6cbd; cursor: pointer;
+  }
+
+  /* ── Ribbon ── */
+  .ribbon {
+    background: #fff; border-bottom: 1px solid #edebe9;
+    display: flex; align-items: center; gap: 4px; padding: 4px 8px;
+    flex-shrink: 0; height: 44px;
+  }
+  .ribbon-btn {
+    display: flex; flex-direction: column; align-items: center; gap: 2px;
+    padding: 4px 10px; border-radius: 4px; cursor: pointer; border: none;
+    background: transparent; font-size: 11px; color: #242424; min-width: 44px;
+    transition: background 0.1s;
+  }
+  .ribbon-btn:hover { background: #f3f2f1; }
+  .ribbon-btn svg { width: 18px; height: 18px; }
+  .ribbon-sep { width: 1px; height: 32px; background: #edebe9; margin: 0 4px; }
+
+  /* ── Main layout ── */
+  .main { display: flex; flex: 1; overflow: hidden; }
+
+  /* ── Sidebar nav ── */
+  .sidebar-nav {
+    width: 48px; background: #fff; border-right: 1px solid #edebe9;
+    display: flex; flex-direction: column; align-items: center; padding: 8px 0; gap: 4px;
+    flex-shrink: 0;
+  }
+  .nav-icon {
+    width: 40px; height: 40px; border-radius: 4px; display: flex; align-items: center;
+    justify-content: center; cursor: pointer; color: #616161; transition: background 0.1s;
+    position: relative;
+  }
+  .nav-icon:hover { background: #f3f2f1; }
+  .nav-icon.active { color: #0f6cbd; background: #deecf9; }
+  .nav-icon svg { width: 20px; height: 20px; }
+  .badge {
+    position: absolute; top: 4px; right: 4px; background: #0f6cbd; color: #fff;
+    border-radius: 10px; font-size: 9px; font-weight: 700; padding: 1px 4px; min-width: 14px;
+    text-align: center;
+  }
+
+  /* ── Folder pane ── */
+  .folder-pane {
+    width: 220px; background: #fff; border-right: 1px solid #edebe9;
+    display: flex; flex-direction: column; flex-shrink: 0; overflow-y: auto;
+  }
+  .folder-header {
+    padding: 12px 16px 8px; font-size: 13px; font-weight: 600; color: #242424;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .folder-item {
+    display: flex; align-items: center; gap: 8px;
+    padding: 6px 16px; cursor: pointer; border-radius: 0;
+    font-size: 13px; color: #424242; transition: background 0.1s;
+  }
+  .folder-item:hover { background: #f3f2f1; }
+  .folder-item.active { background: #deecf9; color: #0f6cbd; font-weight: 600; }
+  .folder-item svg { width: 16px; height: 16px; flex-shrink: 0; }
+  .folder-count { margin-left: auto; font-size: 11px; color: #616161; }
+  .folder-section { padding: 10px 16px 4px; font-size: 11px; font-weight: 600; color: #616161; text-transform: uppercase; letter-spacing: 0.5px; }
+
+  /* ── Email list pane ── */
+  .email-list-pane {
+    width: 320px; background: #f3f2f1; border-right: 1px solid #edebe9;
+    display: flex; flex-direction: column; flex-shrink: 0; overflow: hidden;
+  }
+  .email-list-header {
+    padding: 10px 16px; background: #f3f2f1; border-bottom: 1px solid #edebe9;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .email-list-header h2 { font-size: 16px; font-weight: 600; }
+  .filter-row {
+    padding: 6px 12px; display: flex; gap: 6px; border-bottom: 1px solid #edebe9;
+    background: #f3f2f1;
+  }
+  .filter-chip {
+    padding: 2px 10px; border-radius: 12px; font-size: 12px; background: #fff;
+    border: 1px solid #d2d0ce; cursor: pointer; color: #424242;
+  }
+  .filter-chip.active { background: #0f6cbd; color: #fff; border-color: #0f6cbd; }
+  .email-list { overflow-y: auto; flex: 1; }
+  .email-item {
+    padding: 12px 16px; border-bottom: 1px solid #edebe9; cursor: pointer;
+    background: #fff; transition: background 0.1s; position: relative;
+  }
+  .email-item:hover { background: #f8f8f8; }
+  .email-item.selected { background: #deecf9; border-left: 3px solid #0f6cbd; }
+  .email-item.unread .ei-subject { font-weight: 700; }
+  .ei-top { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 3px; }
+  .ei-to { font-size: 13px; font-weight: 500; color: #242424; }
+  .ei-time { font-size: 11px; color: #616161; white-space: nowrap; }
+  .ei-subject { font-size: 13px; color: #242424; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .ei-preview { font-size: 12px; color: #616161; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .ei-attach { display: inline-block; margin-left: 4px; }
+
+  /* ── Reading pane ── */
+  .reading-pane {
+    flex: 1; background: #fff; display: flex; flex-direction: column; overflow: hidden;
+  }
+  .rp-header { padding: 20px 32px 0; border-bottom: 1px solid #edebe9; }
+  .rp-subject { font-size: 22px; font-weight: 600; color: #242424; margin-bottom: 14px; line-height: 1.3; }
+  .rp-meta { display: flex; align-items: flex-start; gap: 12px; padding-bottom: 14px; }
+  .rp-avatar {
+    width: 40px; height: 40px; border-radius: 50%; background: #c3e7ff;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 15px; color: #0f6cbd; flex-shrink: 0; margin-top: 2px;
+  }
+  .rp-meta-detail { flex: 1; }
+  .rp-from { font-size: 14px; font-weight: 600; color: #242424; }
+  .rp-from span { font-weight: 400; color: #616161; font-size: 13px; }
+  .rp-to { font-size: 13px; color: #616161; margin-top: 2px; }
+  .rp-to a { color: #0f6cbd; text-decoration: none; }
+  .rp-time { font-size: 12px; color: #616161; white-space: nowrap; padding-top: 4px; }
+  .rp-actions { display: flex; gap: 8px; margin-left: auto; align-items: center; }
+  .rp-action-btn {
+    padding: 5px 12px; border-radius: 4px; border: 1px solid #d2d0ce;
+    background: #fff; cursor: pointer; font-size: 13px; color: #242424;
+    display: flex; align-items: center; gap: 5px; transition: background 0.1s;
+  }
+  .rp-action-btn:hover { background: #f3f2f1; }
+  .rp-action-btn svg { width: 14px; height: 14px; }
+  .rp-action-btn.primary { background: #0f6cbd; color: #fff; border-color: #0f6cbd; }
+  .rp-action-btn.primary:hover { background: #115ea3; }
+
+  /* attachment strip */
+  .attachment-strip {
+    padding: 10px 32px; border-bottom: 1px solid #edebe9; display: flex; gap: 10px; flex-wrap: wrap;
+    background: #faf9f8;
+  }
+  .attachment-chip {
+    display: flex; align-items: center; gap: 8px; padding: 6px 12px;
+    background: #fff; border: 1px solid #d2d0ce; border-radius: 4px;
+    cursor: pointer; font-size: 13px; color: #242424; transition: background 0.1s;
+  }
+  .attachment-chip:hover { background: #f3f2f1; }
+  .attachment-chip svg { width: 20px; height: 20px; color: #d83b01; }
+  .attachment-chip .att-name { font-weight: 500; }
+  .attachment-chip .att-size { color: #616161; font-size: 11px; margin-left: 4px; }
+
+  /* body */
+  .rp-body {
+    padding: 24px 32px; overflow-y: auto; flex: 1; line-height: 1.7;
+    font-size: 14px; color: #242424;
+  }
+  .rp-body p { margin-bottom: 12px; }
+  .rp-body ul { margin: 8px 0 12px 24px; }
+  .rp-body ul li { margin-bottom: 4px; }
+  .rp-body .sig { margin-top: 20px; border-top: 1px solid #edebe9; padding-top: 12px; font-size: 13px; color: #424242; }
+  .rp-body .sig strong { display: block; font-size: 14px; color: #242424; }
+
+  /* Sent label pill */
+  .sent-label {
+    display: inline-flex; align-items: center; gap: 4px;
+    background: #f0f9ff; border: 1px solid #b3d7f5; border-radius: 12px;
+    font-size: 11px; color: #0f6cbd; padding: 2px 8px; margin-bottom: 8px;
+  }
+</style>
+</head>
+<body>
+
+<!-- Top Bar -->
+<div class="topbar">
+  <div class="topbar-logo">
+    <!-- Outlook "O" icon -->
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path d="M14 2v8h8V2h-8zm7 7h-6V3h6v6zM0 3.5l12 2.1V18.4L0 20.5V3.5zm6.5 4.8C5.3 8.3 4.5 9.5 4.5 12s.8 3.7 2 3.7 2-1.4 2-3.7-.8-3.7-2-3.7zM14 11v2h8v-2h-8zm0 4v2h8v-2h-8z"/>
+    </svg>
+    Outlook
+  </div>
+  <div class="topbar-search">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <input type="text" placeholder="Search">
+  </div>
+  <div class="topbar-right">
+    <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" width="20" height="20"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+    <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" width="20" height="20"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
+    <div class="avatar">JM</div>
+  </div>
+</div>
+
+<!-- Ribbon -->
+<div class="ribbon">
+  <button class="ribbon-btn">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+    New mail
+  </button>
+  <div class="ribbon-sep"></div>
+  <button class="ribbon-btn">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 17 4 12 9 7"/><path d="M20 18v-2a4 4 0 0 0-4-4H4"/></svg>
+    Reply
+  </button>
+  <button class="ribbon-btn">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 17 20 12 15 7"/><path d="M4 18v-2a4 4 0 0 1 4-4h12"/></svg>
+    Forward
+  </button>
+  <div class="ribbon-sep"></div>
+  <button class="ribbon-btn">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6m4-6v6"/><path d="M9 6V4h6v2"/></svg>
+    Delete
+  </button>
+  <button class="ribbon-btn">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+    Archive
+  </button>
+  <div class="ribbon-sep"></div>
+  <button class="ribbon-btn">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
+    Flag
+  </button>
+  <button class="ribbon-btn">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+    Move
+  </button>
+</div>
+
+<!-- Main -->
+<div class="main">
+
+  <!-- Nav sidebar -->
+  <div class="sidebar-nav">
+    <div class="nav-icon active" title="Mail">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+      <span class="badge">4</span>
+    </div>
+    <div class="nav-icon" title="Calendar">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+    </div>
+    <div class="nav-icon" title="People">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+    </div>
+    <div class="nav-icon" title="Tasks">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+    </div>
+  </div>
+
+  <!-- Folder pane -->
+  <div class="folder-pane">
+    <div class="folder-header">John Miller</div>
+    <div class="folder-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+      Inbox
+      <span class="folder-count">4</span>
+    </div>
+    <div class="folder-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+      Drafts
+      <span class="folder-count">2</span>
+    </div>
+    <div class="folder-item active">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+      Sent Items
+    </div>
+    <div class="folder-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg>
+      Deleted Items
+    </div>
+    <div class="folder-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      Junk Email
+    </div>
+    <div class="folder-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
+      Flagged
+    </div>
+
+    <div class="folder-section">Folders</div>
+    <div class="folder-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+      RFQ Correspondence
+    </div>
+    <div class="folder-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+      Vendors
+    </div>
+  </div>
+
+  <!-- Email list -->
+  <div class="email-list-pane">
+    <div class="email-list-header">
+      <h2>Sent Items</h2>
+      <svg viewBox="0 0 24 24" fill="none" stroke="#616161" stroke-width="2" width="18" height="18"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="14" y2="18"/></svg>
+    </div>
+    <div class="filter-row">
+      <div class="filter-chip active">All</div>
+      <div class="filter-chip">Unread</div>
+      <div class="filter-chip">Flagged</div>
+      <div class="filter-chip">With files</div>
+    </div>
+    <div class="email-list">
+
+      <!-- Selected item -->
+      <div class="email-item selected">
+        <div class="ei-top">
+          <div class="ei-to">Acme Industrial Supply Co.</div>
+          <div class="ei-time" id="ei-sent-time"></div>
+        </div>
+        <div class="ei-subject">Request for Quotation (RFQ) – MAT-ORING-0041 <span class="ei-attach">📎</span></div>
+        <div class="ei-preview">We are currently seeking to replace one of the components…</div>
+      </div>
+
+      <div class="email-item">
+        <div class="ei-top">
+          <div class="ei-to">Global Parts Ltd.</div>
+          <div class="ei-time">Mar 15, 2026</div>
+        </div>
+        <div class="ei-subject">RFQ Follow-up – MAT-VALVE-0038</div>
+        <div class="ei-preview">Please refer to the attached specification sheet and advise…</div>
+      </div>
+
+      <div class="email-item">
+        <div class="ei-top">
+          <div class="ei-to">TechSource Components</div>
+          <div class="ei-time">Mar 12, 2026</div>
+        </div>
+        <div class="ei-subject">Purchase Order Confirmation – PO-2026-0112 <span class="ei-attach">📎</span></div>
+        <div class="ei-preview">Kindly acknowledge receipt of the enclosed purchase order…</div>
+      </div>
+
+      <div class="email-item">
+        <div class="ei-top">
+          <div class="ei-to">Operations Team</div>
+          <div class="ei-time">Mar 10, 2026</div>
+        </div>
+        <div class="ei-subject">BOM Review – Q2 Production Run</div>
+        <div class="ei-preview">Please find attached the updated Bill of Materials for your review…</div>
+      </div>
+
+      <div class="email-item">
+        <div class="ei-top">
+          <div class="ei-to">Lee Seng Hardware</div>
+          <div class="ei-time">Mar 8, 2026</div>
+        </div>
+        <div class="ei-subject">Quotation Request – MAT-BSEAL-0035</div>
+        <div class="ei-preview">We would like to invite your company to submit a quotation…</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Reading pane -->
+  <div class="reading-pane">
+    <div class="rp-header">
+      <div class="sent-label">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        Sent
+      </div>
+      <div class="rp-subject">Request for Quotation (RFQ) – MAT-ORING-0041</div>
+      <div class="rp-meta">
+        <div class="rp-avatar">JM</div>
+        <div class="rp-meta-detail">
+          <div class="rp-from">John Miller <span>&lt;john.miller@evora.com&gt;</span></div>
+          <div class="rp-to">To: <a href="#">John Bosco &lt;j.bosco@acme-industrial.br&gt;</a></div>
+        </div>
+        <div class="rp-time" id="rp-sent-time"></div>
+        <div class="rp-actions">
+          <button class="rp-action-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 17 4 12 9 7"/><path d="M20 18v-2a4 4 0 0 0-4-4H4"/></svg>
+            Reply
+          </button>
+          <button class="rp-action-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 17 20 12 15 7"/><path d="M4 18v-2a4 4 0 0 1 4-4h12"/></svg>
+            Forward
+          </button>
+          <button class="rp-action-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Attachment -->
+    <div class="attachment-strip">
+      <div class="attachment-chip">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        <span>
+          <span class="att-name">RFQ_MAT-ORING-0041.pdf</span>
+          <span class="att-size">284 KB</span>
+        </span>
+      </div>
+    </div>
+
+    <!-- Body -->
+    <div class="rp-body">
+      <p>Dear John Bosco,</p>
+      <p>I hope this message finds you well.</p>
+      <p>We are currently seeking to replace one of the components in our Bill of Materials (BOM) due to a production issue, and we would like to invite your company to submit a quotation for the supply of the specified item(s).</p>
+      <p>Please find attached our Request for Quotation (RFQ), which includes detailed specifications, required quantities, and other relevant requirements.</p>
+      <p>Kindly review the attached RFQ and provide your quotation along with the following information:</p>
+      <ul>
+        <li>Unit pricing (including any volume discounts, if applicable)</li>
+        <li>Lead time for production and delivery</li>
+        <li>Minimum order quantity (MOQ)</li>
+        <li>Payment terms</li>
+        <li>Compliance with specifications and any applicable certifications</li>
+        <li>Warranty and after-sales support (if applicable)</li>
+      </ul>
+      <p>We would appreciate receiving your quotation by <strong id="rfq-deadline"></strong>.</p>
+      <p>Should you require any clarification or additional information, please feel free to contact us.</p>
+      <p>We look forward to your response and the possibility of working together.</p>
+      <p>Thank you.</p>
+      <div class="sig">
+        <strong>John Miller</strong>
+        Executive Engineer<br>
+        Evora<br>
+        +49 30 123456
+      </div>
+    </div>
+  </div>
+
+</div>
+<script>
+  (function () {
+    const now = new Date();
+
+    // ── Sent timestamp: "Wed 16 Apr 2026, 10:23 AM" ──
+    const days   = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    const pad    = n => String(n).padStart(2, '0');
+    const h      = now.getHours();
+    const ampm   = h >= 12 ? 'PM' : 'AM';
+    const h12    = h % 12 || 12;
+    const sentStr = `${days[now.getDay()]} ${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()}, ${h12}:${pad(now.getMinutes())} ${ampm}`;
+    document.getElementById('rp-sent-time').textContent = sentStr;
+
+    // ── Email list date: "Apr 16, 2026" ──
+    const listDateStr = `${months[now.getMonth()]} ${now.getDate()}, ${now.getFullYear()}`;
+    document.getElementById('ei-sent-time').textContent = listDateStr;
+
+    // ── Deadline: today + 30 days, formatted YYYY-MM-DD ──
+    const deadline = new Date(now);
+    deadline.setDate(deadline.getDate() + 30);
+    const deadlineStr = `${deadline.getFullYear()}-${pad(deadline.getMonth() + 1)}-${pad(deadline.getDate())}`;
+    document.getElementById('rfq-deadline').textContent = deadlineStr;
+  })();
+</script>
+</body>
+</html>
