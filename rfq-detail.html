@@ -500,7 +500,7 @@
             <h1 class="object-page-header__title">
               RFQ <strong>6000001234</strong>
             </h1>
-            <p class="object-page-header__subtitle">Industrial Pump Components – Q2 Supply &nbsp;·&nbsp; <span class="badge badge--received">Received</span></p>
+            <p class="object-page-header__subtitle">O-Ring (002664) Replacement &nbsp;·&nbsp; <span class="badge badge--received">Pending</span></p>
             <!-- END EXAMPLE -->
           </div>
         </div>
@@ -529,35 +529,35 @@
         </div>
         <div class="key-fact">
           <div class="key-fact__label">Created On</div>
-          <div class="key-fact__value">14.03.2026</div>
+          <div class="key-fact__value" id="dateDisplay"></div>
         </div>
         <div class="key-fact">
           <div class="key-fact__label">Quotation Deadline</div>
-          <div class="key-fact__value key-fact__value--warning">31.03.2026</div>
+          <div class="key-fact__value key-fact__value--warning" id="deadlineDisplay"></div>
         </div>
         <div class="key-fact">
           <div class="key-fact__label">Net Value</div>
-          <div class="key-fact__value key-fact__value--blue">48,250.00 EUR</div>
+          <div class="key-fact__value key-fact__value--blue">11,900.00 EUR</div>
         </div>
         <!-- END EXAMPLE -->
       </div>
     </div>
 
     <!-- EXAMPLE: inline warning strip when deadline is approaching -->
-    <div class="message-strip message-strip--warning">
+    <!-- <div class="message-strip message-strip--warning">
       <span>&#9888;</span>
       <span><strong>Deadline approaching:</strong> Quotation submission closes on 31.03.2026 (7 days remaining). Send a reminder to the vendor if no response has been received.</span>
-    </div>
+    </div> -->
     <!-- END EXAMPLE -->
 
     <!-- ═══════════════ SECTION TABS ═══════════════ -->
     <div class="section-tabs">
       <div class="section-tab active">Header Details</div>
-      <div class="section-tab">Line Items <span class="tab-count">4</span></div>
+      <div class="section-tab">Line Items <span class="tab-count">1</span></div>
       <div class="section-tab">Vendor Comparison <span class="tab-count">3</span></div>
       <div class="section-tab">Conditions &amp; Terms</div>
       <div class="section-tab">Notes &amp; Texts</div>
-      <div class="section-tab">Activity Log <span class="tab-count">6</span></div>
+      <div class="section-tab">Activity Log <span class="tab-count">1</span></div>
     </div>
 
     <!-- ═══════════════ HEADER DETAILS PANEL ═══════════════ -->
@@ -577,7 +577,7 @@
         </div>
         <div class="form-field">
           <div class="form-field__label">Document Date</div>
-          <div class="form-field__value">14.03.2026</div>
+          <div class="form-field__value" id="documentDateDisplay"></div>
         </div>
         <div class="form-field">
           <div class="form-field__label">Collective RFQ No.</div>
@@ -585,7 +585,7 @@
         </div>
         <div class="form-field form-field--wide">
           <div class="form-field__label">Description</div>
-          <div class="form-field__value">Industrial Pump Components – Q2 Supply</div>
+          <div class="form-field__value">O-Ring (002664) Replacement</div>
         </div>
         <div class="form-field">
           <div class="form-field__label">Purchasing Organization</div>
@@ -617,7 +617,7 @@
         </div>
         <div class="form-field">
           <div class="form-field__label">Quotation Deadline</div>
-          <div class="form-field__value" style="color:var(--sap-warning);font-weight:600;">31.03.2026</div>
+          <div class="form-field__value" style="color:var(--sap-warning);font-weight:600;" id="priceQuotationDisplay"></div>
         </div>
         <div class="form-field">
           <div class="form-field__label">Binding Period (days)</div>
@@ -625,7 +625,7 @@
         </div>
         <div class="form-field">
           <div class="form-field__label">Expected Delivery</div>
-          <div class="form-field__value">15.05.2026</div>
+          <div class="form-field__value" id="deliveryDisplay"></div>
         </div>
         <div class="form-field">
           <div class="form-field__label">Priority</div>
@@ -650,19 +650,19 @@
         </div>
         <div class="form-field">
           <div class="form-field__label">Contact Person</div>
-          <div class="form-field__value">Hans Gruber</div>
+          <div class="form-field__value">John Bosco</div>
         </div>
         <div class="form-field">
           <div class="form-field__label">Vendor Address</div>
-          <div class="form-field__value">Industriestr. 22, 20095 Hamburg, DE</div>
+          <div class="form-field__value">Av. Dr. Chucri Zaidan, 1240 - Vila Cordeiro, São Paulo - SP, 04710-230, Brazil</div>
         </div>
         <div class="form-field">
           <div class="form-field__label">Email</div>
-          <div class="form-field__value form-field__value--link">h.gruber@acme-industrial.de</div>
+          <div class="form-field__value form-field__value--link">j.bosco@acme-industrial.br</div>
         </div>
         <div class="form-field">
           <div class="form-field__label">Phone</div>
-          <div class="form-field__value">+49 40 123 456 78</div>
+          <div class="form-field__value">+55 40 123 456 78</div>
         </div>
         <div class="form-field">
           <div class="form-field__label">Payment Terms</div>
@@ -699,19 +699,19 @@
           <!-- EXAMPLE: line item 1 -->
           <tr>
             <td><span class="item-no">00010</span></td>
-            <td><span class="mat-no">MAT-PMP-0041</span></td>
-            <td>Centrifugal Pump Casing – 316 SS, DN100</td>
-            <td class="right"><span class="qty">5</span></td>
+            <td><span class="mat-no">MAT-ORING-0041</span></td>
+            <td>O-Ring – 316 SS, DN100</td>
+            <td class="right"><span class="qty">1000</span></td>
             <td><span class="unit">EA</span></td>
-            <td class="right price-cell">3,200.00 <span class="price-currency">EUR</span></td>
+            <td class="right price-cell">10.00 <span class="price-currency">EUR</span></td>
             <td class="right"><span class="unit">1 EA</span></td>
-            <td class="right price-cell"><strong>16,000.00</strong> <span class="price-currency">EUR</span></td>
+            <td class="right price-cell"><strong>10,000.00</strong> <span class="price-currency">EUR</span></td>
             <td><span class="delivery-date">15.05.2026</span></td>
             <td>1010</td>
           </tr>
 
           <!-- EXAMPLE: line item 2 -->
-          <tr>
+          <!-- <tr>
             <td><span class="item-no">00020</span></td>
             <td><span class="mat-no">MAT-PMP-0088</span></td>
             <td>Impeller Assembly – Bronze, 250mm dia.</td>
@@ -722,10 +722,10 @@
             <td class="right price-cell"><strong>9,250.00</strong> <span class="price-currency">EUR</span></td>
             <td><span class="delivery-date">15.05.2026</span></td>
             <td>1010</td>
-          </tr>
+          </tr> -->
 
           <!-- EXAMPLE: line item 3 -->
-          <tr>
+          <!-- <tr>
             <td><span class="item-no">00030</span></td>
             <td><span class="mat-no">MAT-SL-0023</span></td>
             <td>Mechanical Seal Kit – PTFE, 40mm shaft</td>
@@ -736,10 +736,10 @@
             <td class="right price-cell"><strong>8,400.00</strong> <span class="price-currency">EUR</span></td>
             <td><span class="delivery-date">01.05.2026</span></td>
             <td>1010</td>
-          </tr>
+          </tr> -->
 
           <!-- EXAMPLE: line item 4 -->
-          <tr>
+          <!-- <tr>
             <td><span class="item-no">00040</span></td>
             <td><span class="mat-no">MAT-BRG-0111</span></td>
             <td>Bearing Housing – Cast Iron, flanged</td>
@@ -750,7 +750,7 @@
             <td class="right price-cell"><strong>14,600.00</strong> <span class="price-currency">EUR</span></td>
             <td><span class="delivery-date">20.05.2026</span></td>
             <td>1010</td>
-          </tr>
+          </tr> -->
           <!-- END EXAMPLE -->
         </tbody>
       </table>
@@ -759,15 +759,15 @@
       <div class="totals-row">
         <div class="total-item">
           <div class="total-item__label">Subtotal</div>
-          <div class="total-item__value">48,250.00 EUR</div>
+          <div class="total-item__value">10,000.00 EUR</div>
         </div>
         <div class="total-item">
           <div class="total-item__label">Tax (19%)</div>
-          <div class="total-item__value">9,167.50 EUR</div>
+          <div class="total-item__value">1,900.00 EUR</div>
         </div>
         <div class="total-item total-item--grand">
           <div class="total-item__label">Total (incl. Tax)</div>
-          <div class="total-item__value">57,417.50 EUR</div>
+          <div class="total-item__value">11,900.00 EUR</div>
         </div>
       </div>
     </div>
@@ -783,39 +783,19 @@
       <div class="vendor-cards">
 
         <!-- EXAMPLE: vendor comparison card – best price -->
-        <div class="vendor-card vendor-card--best">
+        <div class="vendor-card">
           <div class="vendor-card__header">
             <div>
               <div class="vendor-card__name">Acme Industrial Supply Co.</div>
-              <div class="vendor-card__id">Vendor: 100042 &nbsp;·&nbsp; Quotation: 6000001234</div>
+              <div class="vendor-card__id">Vendor: 100042 &nbsp;·&nbsp; No quote yet</div>
             </div>
-            <span class="best-badge">Best Price</span>
           </div>
-          <div class="vendor-card__body">
-            <div class="vendor-kv">
-              <span class="vendor-kv__label">Net Value</span>
-              <span class="vendor-kv__value vendor-kv__value--best">48,250.00 EUR</span>
-            </div>
-            <div class="vendor-kv">
-              <span class="vendor-kv__label">Delivery Lead Time</span>
-              <span class="vendor-kv__value">45 days</span>
-            </div>
-            <div class="vendor-kv">
-              <span class="vendor-kv__label">Payment Terms</span>
-              <span class="vendor-kv__value">14 days 2%, 30 net</span>
-            </div>
-            <div class="vendor-kv">
-              <span class="vendor-kv__label">Incoterms</span>
-              <span class="vendor-kv__value">DDP Hamburg</span>
-            </div>
-            <div class="vendor-kv">
-              <span class="vendor-kv__label">Warranty</span>
-              <span class="vendor-kv__value">24 months</span>
-            </div>
+          <div class="vendor-card__body" style="color:var(--sap-text-secondary);font-size:13px;text-align:center;padding:24px 14px;">
+            <div style="font-size:24px;margin-bottom:8px;">&#128507;</div>
+            Quotation not yet received.
           </div>
           <div class="vendor-card__footer">
-            <button class="btn btn--positive btn--sm" style="flex:1;">&#10003; Award</button>
-            <button class="btn btn--ghost btn--sm">View Quote</button>
+            <button class="btn btn--ghost btn--sm" style="flex:1;">&#128257; Resend RFQ</button>
           </div>
         </div>
 
@@ -824,34 +804,15 @@
           <div class="vendor-card__header">
             <div>
               <div class="vendor-card__name">Meier Pumpentechnik GmbH</div>
-              <div class="vendor-card__id">Vendor: 100078 &nbsp;·&nbsp; Quotation: 6000001244</div>
+              <div class="vendor-card__id">Vendor: 100129 &nbsp;·&nbsp; No quote yet</div>
             </div>
           </div>
-          <div class="vendor-card__body">
-            <div class="vendor-kv">
-              <span class="vendor-kv__label">Net Value</span>
-              <span class="vendor-kv__value">53,100.00 EUR</span>
-            </div>
-            <div class="vendor-kv">
-              <span class="vendor-kv__label">Delivery Lead Time</span>
-              <span class="vendor-kv__value">60 days</span>
-            </div>
-            <div class="vendor-kv">
-              <span class="vendor-kv__label">Payment Terms</span>
-              <span class="vendor-kv__value">30 days net</span>
-            </div>
-            <div class="vendor-kv">
-              <span class="vendor-kv__label">Incoterms</span>
-              <span class="vendor-kv__value">EXW Munich</span>
-            </div>
-            <div class="vendor-kv">
-              <span class="vendor-kv__label">Warranty</span>
-              <span class="vendor-kv__value">12 months</span>
-            </div>
+          <div class="vendor-card__body" style="color:var(--sap-text-secondary);font-size:13px;text-align:center;padding:24px 14px;">
+            <div style="font-size:24px;margin-bottom:8px;">&#128507;</div>
+            Quotation not yet received.
           </div>
           <div class="vendor-card__footer">
-            <button class="btn btn--ghost btn--sm" style="flex:1;">Award</button>
-            <button class="btn btn--ghost btn--sm">View Quote</button>
+            <button class="btn btn--ghost btn--sm" style="flex:1;">&#128257; Resend RFQ</button>
           </div>
         </div>
 
@@ -865,7 +826,7 @@
           </div>
           <div class="vendor-card__body" style="color:var(--sap-text-secondary);font-size:13px;text-align:center;padding:24px 14px;">
             <div style="font-size:24px;margin-bottom:8px;">&#128507;</div>
-            Quotation not yet received.<br/>Reminder sent on 20.03.2026.
+            Quotation not yet received.
           </div>
           <div class="vendor-card__footer">
             <button class="btn btn--ghost btn--sm" style="flex:1;">&#128257; Resend RFQ</button>
@@ -909,11 +870,11 @@
         </div>
         <div class="condition-item">
           <div class="condition-item__label">Pricing Date</div>
-          <div class="condition-item__value">14.03.2026</div>
+          <div class="condition-item__value" id="pricingDateDisplay"></div>
         </div>
         <div class="condition-item">
           <div class="condition-item__label">Price Valid Until</div>
-          <div class="condition-item__value">13.04.2026</div>
+          <div class="condition-item__value" id="priceValidDisplay"></div>
         </div>
         <div class="condition-item">
           <div class="condition-item__label">Penalty Clause</div>
@@ -933,13 +894,7 @@
       </div>
       <!-- EXAMPLE: purchasing notes text -->
       <div style="padding: 4px 20px 8px; font-size: 12px; color: var(--sap-text-label); text-transform: uppercase; letter-spacing: 0.4px; margin-top: 10px;">Purchasing Notes</div>
-      <div class="notes-box">Vendor confirmed telephone availability for technical queries at +49 40 123 456 78 (contact: Hans Gruber).
-
-Vendor has been pre-qualified for precision pump components. Previous delivery performance rating: 4.3/5.0 (FY2025).
-
-All items must comply with EN ISO 9001:2015. Certificates of conformity required on delivery.
-
-Preferred delivery window: 12.05.2026 – 20.05.2026. Please confirm split delivery feasibility for items 10 and 20.</div>
+      <div class="notes-box">RFQ created by Dxster on behalf of John Miller.</div>
       <!-- END EXAMPLE -->
 
       <!-- EXAMPLE: internal comments text -->
@@ -956,7 +911,7 @@ Preferred delivery window: 12.05.2026 – 20.05.2026. Please confirm split deliv
       <div class="timeline">
 
         <!-- EXAMPLE: activity log entries -->
-        <div class="timeline-item">
+        <!-- <div class="timeline-item">
           <div class="timeline-dot timeline-dot--warning">&#9888;</div>
           <div class="timeline-content">
             <div class="timeline-content__title">Quotation received from Acme Industrial Supply Co.</div>
@@ -995,21 +950,89 @@ Preferred delivery window: 12.05.2026 – 20.05.2026. Please confirm split deliv
             <div class="timeline-content__detail">Item 00040 (Bearing Housing) added to RFQ; quantity revised for items 00010 and 00030</div>
             <div class="timeline-content__time">14.03.2026, 16:20 &nbsp;·&nbsp; John Miller (JMILLER)</div>
           </div>
-        </div>
+        </div> -->
         <div class="timeline-item">
           <div class="timeline-dot timeline-dot--neutral">&#128203;</div>
           <div class="timeline-content">
             <div class="timeline-content__title">RFQ created</div>
-            <div class="timeline-content__detail">RFQ 6000001234 created for Industrial Pump Components – Q2 Supply</div>
-            <div class="timeline-content__time">14.03.2026, 10:02 &nbsp;·&nbsp; John Miller (JMILLER)</div>
+            <div class="timeline-content__detail">RFQ 6000001234 created for O-Ring (002664) Replacement</div>
+            <div class="timeline-content__time" id="createdLogTime"></div>
           </div>
         </div>
         <!-- END EXAMPLE -->
 
       </div>
-    </div>
+    </div>                                                                                                                                                                                                                                                                                                                   
 
   </div><!-- /page-wrapper -->
+
+  <script>
+  // ─── CONFIGURE YOUR DATE FORMAT HERE ───────────────────────────────────────
+  const DATE_LOCALE = 'de-DE';           // e.g. 'en-US', 'en-GB', 'ms-MY'
+  const DATE_OPTIONS = {
+    day:   '2-digit',
+    month: '2-digit',
+    year:  'numeric'
+  };
+  const DATE_TIME_OPTIONS = {
+  day: '2-digit',
+  month: '2-digit',
+  year: 'numeric',
+  hour: '2-digit',
+  minute: '2-digit',
+  hour12: false
+  };
+  // ───────────────────────────────────────────────────────────────────────────
+
+  // Get today's date (automatically updates every time the page is opened)
+  const today = new Date();
+  
+  const deadline = new Date(today);
+  deadline.setDate(today.getDate() + 30);
+
+  const delivery = new Date(today);
+  delivery.setDate(today.getDate() + 60);
+
+  // Display formatted date
+  document.getElementById('dateDisplay').textContent =
+    today.toLocaleDateString(DATE_LOCALE, DATE_OPTIONS);
+
+  // Display document date (same as today)
+  document.getElementById('documentDateDisplay').textContent =
+    today.toLocaleDateString(DATE_LOCALE, DATE_OPTIONS);
+
+  // Display pricing date (same as today)
+  document.getElementById('pricingDateDisplay').textContent =
+    today.toLocaleDateString(DATE_LOCALE, DATE_OPTIONS);
+
+  // Display deadline date
+  document.getElementById('deadlineDisplay').textContent =
+    deadline.toLocaleDateString(DATE_LOCALE, DATE_OPTIONS);
+
+  // Display price valid until (same as deadline)
+  document.getElementById('priceValidDisplay').textContent =
+    deadline.toLocaleDateString(DATE_LOCALE, DATE_OPTIONS);
+
+  // Display the 2nd Quotation Deadline (same as deadline)
+  document.getElementById('priceQuotationDisplay').textContent =
+    deadline.toLocaleDateString(DATE_LOCALE, DATE_OPTIONS);
+
+  // Display delivery date
+  document.getElementById('deliveryDisplay').textContent =
+    delivery.toLocaleDateString(DATE_LOCALE, DATE_OPTIONS);
+
+  // Set activity log timestamp
+  document.getElementById('createdLogTime').textContent =
+    `${today.toLocaleString(DATE_LOCALE, DATE_TIME_OPTIONS)} · John Miller (JMILLER)`;
+
+  // // Display day of the week
+  // document.getElementById('dayDisplay').textContent =
+  //   today.toLocaleDateString(DATE_LOCALE, { weekday: 'long' });
+
+  // // Display ISO format
+  // document.getElementById('isoDisplay').textContent =
+  //   today.toISOString().split('T')[0];
+</script>
 
 </body>
 </html>
